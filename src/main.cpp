@@ -22,7 +22,9 @@ int main(){
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     if(!gl::load()){glfwDestroyWindow(window);glfwTerminate();return 1;}
-    glEnable(GL_DEPTH_TEST); glEnable(GL_CULL_FACE); glCullFace(GL_BACK); glEnable(GL_MULTISAMPLE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     Shader shader;
     if(!shader.create("assets/shaders/world.vert","assets/shaders/world.frag")) return 1;
@@ -76,7 +78,6 @@ int main(){
         Mat4 projection=Mat4::perspective(.82f,float(w)/float(h),.05f,85.f);
         Mat4 vp=projection*camera.view();
 
-        // The beam origin is offset from the player's eyes and follows the FPS camera.
         Vec3 beamDirection=camera.forward();
         Vec3 beamOrigin=camera.position()+camera.right()*.28f+Vec3{0,-.16f,.0f}+beamDirection*.20f;
         scene.render(shader,vp,camera.position(),beamOrigin,beamDirection,lightOn,time);
