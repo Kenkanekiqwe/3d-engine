@@ -39,11 +39,9 @@ set(ASSIMP_BUILD_COBALT_IMPORTER OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     assimp
-    GIT_REPOSITORY https://github.com/assimp/assimp.git
-    GIT_TAG v6.0.2
-    GIT_SHALLOW TRUE
+    URL https://github.com/assimp/assimp/archive/refs/tags/v6.0.5.tar.gz
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
-FetchContent_MakeAvailable(assimp)
 
 add_executable(CryHorror
     src/main.cpp
