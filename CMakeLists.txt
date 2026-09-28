@@ -6,14 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
+
+# GLFW: window/input layer only.
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
-set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     glfw
@@ -22,10 +19,29 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glfw)
 
+# Assimp: model importer. Disable everything not needed by the runtime.
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_MINIZIP OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_VIEW OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_IFC_IMPORTER OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_USD_IMPORTER OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_X3D_IMPORTER OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_COBALT_IMPORTER OFF CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
     assimp
     GIT_REPOSITORY https://github.com/assimp/assimp.git
     GIT_TAG v6.0.2
+    GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(assimp)
 
@@ -40,8 +56,15 @@ add_executable(CryHorror
     src/engine/audio/audio.cpp
 )
 
-target_include_directories(CryHorror PRIVATE src third_party)
-target_link_libraries(CryHorror PRIVATE glfw assimp::assimp)
+target_include_directories(CryHorror PRIVATE
+    src
+    third_party
+)
+
+target_link_libraries(CryHorror PRIVATE
+    glfw
+    assimp::assimp
+)
 
 if(WIN32)
     target_link_libraries(CryHorror PRIVATE opengl32 winmm)
