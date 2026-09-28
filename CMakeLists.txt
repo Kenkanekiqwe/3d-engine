@@ -25,13 +25,14 @@ add_executable(CryHorror
     src/engine/camera/camera.cpp
     src/engine/scene/scene.cpp
     src/engine/input/input.cpp
+    src/engine/audio/audio.cpp
 )
 
 target_include_directories(CryHorror PRIVATE src)
 target_link_libraries(CryHorror PRIVATE glfw)
 
 if(WIN32)
-    target_link_libraries(CryHorror PRIVATE opengl32)
+    target_link_libraries(CryHorror PRIVATE opengl32 winmm)
 endif()
 
 if(MSVC)
