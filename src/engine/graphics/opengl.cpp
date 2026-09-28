@@ -4,31 +4,31 @@ namespace cry::gl {
 
 #define LOAD(name, symbol) do { name = reinterpret_cast<decltype(name)>(glfwGetProcAddress(symbol)); if(!name) return false; } while(false)
 
-PFNGLCREATESHADERPROC CreateShader{};
-PFNGLSHADERSOURCEPROC ShaderSource{};
-PFNGLCOMPILESHADERPROC CompileShader{};
-PFNGLGETSHADERIVPROC GetShaderiv{};
-PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog{};
-PFNGLDELETESHADERPROC DeleteShader{};
-PFNGLCREATEPROGRAMPROC CreateProgram{};
-PFNGLATTACHSHADERPROC AttachShader{};
-PFNGLLINKPROGRAMPROC LinkProgram{};
-PFNGLGETPROGRAMIVPROC GetProgramiv{};
-PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog{};
-PFNGLDELETEPROGRAMPROC DeleteProgram{};
-PFNGLUSEPROGRAMPROC UseProgram{};
-PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation{};
-PFNGLUNIFORM1FPROC Uniform1f{};
-PFNGLUNIFORM1IPROC Uniform1i{};
-PFNGLUNIFORM3FPROC Uniform3f{};
-PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv{};
-PFNGLGENVERTEXARRAYSPROC GenVertexArrays{};
-PFNGLBINDVERTEXARRAYPROC BindVertexArray{};
-PFNGLGENBUFFERSPROC GenBuffers{};
-PFNGLBINDBUFFERPROC BindBuffer{};
-PFNGLBUFFERDATAPROC BufferData{};
-PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{};
-PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{};
+CreateShaderProc CreateShader{};
+ShaderSourceProc ShaderSource{};
+CompileShaderProc CompileShader{};
+GetShaderivProc GetShaderiv{};
+GetShaderInfoLogProc GetShaderInfoLog{};
+DeleteShaderProc DeleteShader{};
+CreateProgramProc CreateProgram{};
+AttachShaderProc AttachShader{};
+LinkProgramProc LinkProgram{};
+GetProgramivProc GetProgramiv{};
+GetProgramInfoLogProc GetProgramInfoLog{};
+DeleteProgramProc DeleteProgram{};
+UseProgramProc UseProgram{};
+GetUniformLocationProc GetUniformLocation{};
+Uniform1fProc Uniform1f{};
+Uniform1iProc Uniform1i{};
+Uniform3fProc Uniform3f{};
+UniformMatrix4fvProc UniformMatrix4fv{};
+GenVertexArraysProc GenVertexArrays{};
+BindVertexArrayProc BindVertexArray{};
+GenBuffersProc GenBuffers{};
+BindBufferProc BindBuffer{};
+BufferDataProc BufferData{};
+VertexAttribPointerProc VertexAttribPointer{};
+EnableVertexAttribArrayProc EnableVertexAttribArray{};
 
 bool load() {
     LOAD(CreateShader, "glCreateShader");
