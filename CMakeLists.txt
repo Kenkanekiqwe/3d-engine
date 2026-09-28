@@ -41,7 +41,7 @@ add_executable(CryHorror
 )
 
 target_include_directories(CryHorror PRIVATE src third_party)
-target_link_libraries(CryHorror PRIVATE glfw assimp)
+target_link_libraries(CryHorror PRIVATE glfw assimp::assimp)
 
 if(WIN32)
     target_link_libraries(CryHorror PRIVATE opengl32 winmm)
