@@ -57,6 +57,8 @@ add_executable(CryHorror
 target_include_directories(CryHorror PRIVATE
     src
     third_party
+    ${assimp_SOURCE_DIR}/include
+    ${assimp_BINARY_DIR}/include
 )
 
 target_link_libraries(CryHorror PRIVATE
