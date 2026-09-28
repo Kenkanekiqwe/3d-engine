@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <cmath>
 namespace cry {
-static unsigned imageTexture(const std::string&p,bool srgb=false){int w=0,h=0,n=0;stbi_uc*d=stbi_load(p.c_str(),&w,&h,&n,4);if(!d)return 0;unsigned t=0;gl::GenTextures(1,&t);gl::BindTexture(GL_TEXTURE_2D,t);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);gl::TexImage2D(GL_TEXTURE_2D,0,srgb?0x8C40:GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,d);gl::GenerateMipmap(GL_TEXTURE_2D);stbi_image_free(d);return t;}
+static unsigned imageTexture(const std::string&p,bool srgb=false){int w=0,h=0,n=0;stbi_uc*d=stbi_load(p.c_str(),&w,&h,&n,4);if(!d)return 0;unsigned t=0;gl::GenTextures(1,&t);gl::BindTexture(GL_TEXTURE_2D,t);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);gl::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);gl::TexImage2D(GL_TEXTURE_2D,0,srgb?0x8C42:GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,d);gl::GenerateMipmap(GL_TEXTURE_2D);stbi_image_free(d);return t;}
 static std::string texPath(const aiMaterial*m,aiTextureType type,const std::filesystem::path&base){aiString s;if(m->GetTexture(type,0,&s)!=AI_SUCCESS)return{};std::string x=s.C_Str();if(!x.empty()&&x[0]=='*')return{};return(base/x).lexically_normal().string();}
 static MeshPart makePart(const aiMesh*m,const aiMaterial*mat,const std::filesystem::path&base){
  std::vector<float>d;d.reserve(m->mNumFaces*3*11);
