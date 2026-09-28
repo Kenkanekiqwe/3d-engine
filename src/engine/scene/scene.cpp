@@ -8,9 +8,9 @@ void Scene::render(Shader&s,const Mat4&vp,const Vec3&cam,const Vec3&fp,const Vec
 draw(s,ground_,Mat4::identity(),{.075f,.082f,.062f},vp,cam,fp,fd,on,time,0);
 draw(s,cube_,Mat4::translation({0,-.12f,-4})*Mat4::scale({3.8f,.04f,35}),{.10f,.075f,.048f},vp,cam,fp,fd,on,time,0);
 const float trees[][3]={{-13,15,1.55f},{-9,17,1.15f},{-4,19,1.7f},{2,18,1.3f},{8,17,1.8f},{14,14,1.45f},{-16,9,1.6f},{-12,5,1.15f},{12,6,1.5f},{16,2,1.8f},{-16,-4,1.55f},{14,-5,1.35f},{-15,-12,1.8f},{-9,-16,1.45f},{4,-18,1.75f},{13,-15,1.5f}};
-for(auto&t:trees)draw(s,pine,Mat4::translation({t[0],0,t[1]})*Mat4::rotationY(t[0]*.13f+sin(time*.7f+t[0])*.015f)*Mat4::scale({t[2],t[2],t[2]}),{.026f,.070f,.038f},vp,cam,fp,fd,on,time,2);
+for(auto&t:trees)draw(s,pine_,Mat4::translation({t[0],0,t[1]})*Mat4::rotationY(t[0]*.13f+sin(time*.7f+t[0])*.015f)*Mat4::scale({t[2],t[2],t[2]}),{.026f,.070f,.038f},vp,cam,fp,fd,on,time,2);
 const float rocks[][3]={{-3.5f,.45f,-2},{3.5f,.42f,-6},{-5.5f,.35f,4},{6,.28f,7}};
-for(auto&r:rocks)draw(s,rock,Mat4::translation({r[0],r[1],r[2]})*Mat4::scale({1.2f,.65f,.9f}),{.09f,.095f,.085f},vp,cam,fp,fd,on,time,3);
+for(auto&r:rocks)draw(s,rock_,Mat4::translation({r[0],r[1],r[2]})*Mat4::scale({1.2f,.65f,.9f}),{.09f,.095f,.085f},vp,cam,fp,fd,on,time,3);
 draw(s,cube_,Mat4::translation({-4,1.65f,-16})*Mat4::scale({6.4f,3.3f,4.2f}),{.085f,.058f,.038f},vp,cam,fp,fd,on,time,4);
 draw(s,cube_,Mat4::translation({-4,3.62f,-16})*Mat4::rotationY(.785f)*Mat4::scale({5.1f,.48f,5.1f}),{.025f,.028f,.027f},vp,cam,fp,fd,on,time,5);
 draw(s,cube_,Mat4::translation({-4,1.3f,-13.83f})*Mat4::scale({1.25f,2.5f,.12f}),{.035f,.024f,.018f},vp,cam,fp,fd,on,time,4);
