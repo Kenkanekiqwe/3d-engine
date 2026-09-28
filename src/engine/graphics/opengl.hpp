@@ -1,0 +1,34 @@
+#pragma once
+#include <GLFW/glfw3.h>
+
+namespace cry::gl {
+
+extern PFNGLCREATESHADERPROC CreateShader;
+extern PFNGLSHADERSOURCEPROC ShaderSource;
+extern PFNGLCOMPILESHADERPROC CompileShader;
+extern PFNGLGETSHADERIVPROC GetShaderiv;
+extern PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog;
+extern PFNGLDELETESHADERPROC DeleteShader;
+extern PFNGLCREATEPROGRAMPROC CreateProgram;
+extern PFNGLATTACHSHADERPROC AttachShader;
+extern PFNGLLINKPROGRAMPROC LinkProgram;
+extern PFNGLGETPROGRAMIVPROC GetProgramiv;
+extern PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog;
+extern PFNGLDELETEPROGRAMPROC DeleteProgram;
+extern PFNGLUSEPROGRAMPROC UseProgram;
+extern PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation;
+extern PFNGLUNIFORM1FPROC Uniform1f;
+extern PFNGLUNIFORM1IPROC Uniform1i;
+extern PFNGLUNIFORM3FPROC Uniform3f;
+extern PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv;
+extern PFNGLGENVERTEXARRAYSPROC GenVertexArrays;
+extern PFNGLBINDVERTEXARRAYPROC BindVertexArray;
+extern PFNGLGENBUFFERSPROC GenBuffers;
+extern PFNGLBINDBUFFERPROC BindBuffer;
+extern PFNGLBUFFERDATAPROC BufferData;
+extern PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray;
+
+bool load();
+
+}
