@@ -7,13 +7,38 @@ Get-Zip "https://opengameart.org/sites/default/files/Low_Poly_Forest_Pack_Devils
 Get-Zip "https://opengameart.org/sites/default/files/ultimate_textured_building_pack_by_quaternius.zip" (Join-Path $external "buildings.zip") (Join-Path $external "buildings")
 $forestDir=Join-Path $external "forest";$buildDir=Join-Path $external "buildings"
 $objs=Get-ChildItem $forestDir -Recurse -Filter "*.obj"|Where-Object{$_.Name -match "tree|Tree|pine|Pine"}|Select-Object -First 8
-$i=1;foreach($o in $objs){Copy-Item $o.FullName (Join-Path $trees ("tree$i.obj")) -Force; $mtl=[System.IO.Path]::ChangeExtension($o.FullName,".mtl");if(Test-Path $mtl){Copy-Item $mtl (Join-Path $trees ("tree$i.mtl")) -Force};$i++}
+$i=1
+foreach($o in $objs){
+ $dst=Join-Path $trees ("tree$i.obj");Copy-Item $o.FullName $dst -Force
+ $mtl=[System.IO.Path]::ChangeExtension($o.FullName,".mtl")
+ if(Test-Path $mtl){
+   $mtlDst=Join-Path $trees ("tree$i.mtl");Copy-Item $mtl $mtlDst -Force
+   $objTxt=Get-Content $dst -Raw
+   $objTxt=[regex]::Replace($objTxt,'(?m)^mtllib\s+.*$','mtllib tree'+$i+'.mtl')
+   Set-Content -Path $dst -Value $objTxt -Encoding UTF8
+   $mtxt=Get-Content $mtlDst -Raw
+   $mtxt=[regex]::Replace($mtxt,'(?m)^map_Kd\s+(.+)$',{param($m) "map_Kd "+[System.IO.Path]::GetFileName($m.Groups[1].Value.Trim())})
+   Set-Content -Path $mtlDst -Value $mtxt -Encoding UTF8
+   Get-ChildItem (Split-Path $mtl -Parent) -Recurse -File -Include *.png,*.jpg,*.jpeg|ForEach-Object{
+      if($mtxt -match [regex]::Escape($_.Name)){Copy-Item $_.FullName (Join-Path $trees $_.Name) -Force}
+   }
+ }
+ $i++
+}
 $house=Get-ChildItem $buildDir -Recurse -Filter "*.obj"|Where-Object{$_.Name -match "house|House|building|Building"}|Select-Object -First 1
-if($house){Copy-Item $house.FullName (Join-Path $level "house.obj") -Force;$mtl=[System.IO.Path]::ChangeExtension($house.FullName,".mtl");if(Test-Path $mtl){Copy-Item $mtl (Join-Path $level "house.mtl") -Force}}
-# Copy all nearby PNG/JPG assets so MTL-relative texture paths can be resolved.
-Get-ChildItem $forestDir,$buildDir -Recurse -Include *.png,*.jpg,*.jpeg|ForEach-Object{Copy-Item $_.FullName (Join-Path $level $_.Name) -Force}
-# Rewrite MTL texture paths to the runtime asset directory.
-Get-ChildItem $trees,$level -Filter "*.mtl" -Recurse|ForEach-Object{$txt=Get-Content $_.FullName -Raw;$txt=[regex]::Replace($txt,'(?m)^map_Kd\s+(.+)$','map_Kd '+([System.IO.Path]::GetFileName($Matches[1])));Set-Content -Path $_.FullName -Value $txt -Encoding UTF8}
+if($house){
+ $houseDst=Join-Path $level "house.obj";Copy-Item $house.FullName $houseDst -Force
+ $mtl=[System.IO.Path]::ChangeExtension($house.FullName,".mtl")
+ if(Test-Path $mtl){
+   Copy-Item $mtl (Join-Path $level "house.mtl") -Force
+   $objTxt=Get-Content $houseDst -Raw;$objTxt=[regex]::Replace($objTxt,'(?m)^mtllib\s+.*$','mtllib house.mtl');Set-Content -Path $houseDst -Value $objTxt -Encoding UTF8
+   $mtxt=Get-Content (Join-Path $level "house.mtl") -Raw
+   $mtxt=[regex]::Replace($mtxt,'(?m)^map_Kd\s+(.+)$',{param($m) "map_Kd "+[System.IO.Path]::GetFileName($m.Groups[1].Value.Trim())})
+   Set-Content -Path (Join-Path $level "house.mtl") -Value $mtxt -Encoding UTF8
+   Get-ChildItem (Split-Path $mtl -Parent) -Recurse -File -Include *.png,*.jpg,*.jpeg|ForEach-Object{
+      if($mtxt -match [regex]::Escape($_.Name)){Copy-Item $_.FullName (Join-Path $level $_.Name) -Force}
+   }
+ }
+}
 $horror=Join-Path $audio "ambient_horror.wav";if(!(Test-Path $horror)){Invoke-WebRequest -Uri "https://opengameart.org/sites/default/files/ambient_horror.wav" -OutFile $horror}
-$rain=Join-Path $audio "rain.ogg";if(!(Test-Path $rain)){Invoke-WebRequest -Uri "https://opengameart.org/sites/default/files/Ove%20Melaa%20-%20Rainy%20%28NOT%20loopable%29%20Long%20Version.ogg" -OutFile $rain}
-Write-Host "Assets installed: textured forest, building pack, quiet horror ambience and rain."
+Write-Host "Assets installed: textured forest, textured building, and quiet horror ambience."
