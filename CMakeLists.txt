@@ -52,9 +52,6 @@ add_executable(CryHorror
     src/engine/camera/camera.cpp
     src/engine/scene/scene.cpp
     src/engine/input/input.cpp
-    src/engine/camera/camera.cpp
-    src/engine/scene/scene.cpp
-    src/engine/input/input.cpp
     src/engine/audio/audio.cpp
 )
 
