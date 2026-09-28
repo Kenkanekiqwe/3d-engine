@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <functional>
 #include <unordered_map>
 #include <cmath>
 namespace cry {
