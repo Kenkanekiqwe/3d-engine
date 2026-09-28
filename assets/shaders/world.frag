@@ -4,132 +4,106 @@ out vec4 FragColor;
 
 uniform vec3 uColor;
 uniform vec3 uCamera;
-
 uniform vec3 uLight0Pos;
 uniform vec3 uLight0Color;
 uniform float uLight0Radius;
 uniform float uLight0Intensity;
-
 uniform vec3 uLight1Pos;
 uniform vec3 uLight1Color;
 uniform float uLight1Radius;
 uniform float uLight1Intensity;
-
 uniform vec3 uFlashPos;
 uniform vec3 uFlashDir;
 uniform float uFlashOn;
 uniform float uTime;
 uniform int uMaterial;
 
-float hash(vec2 p) {
-    p = fract(p * vec2(123.34, 456.21));
-    p += dot(p, p + 45.32);
-    return fract(p.x * p.y);
+float hash(vec2 p){
+    p=fract(p*vec2(127.1,311.7));p+=dot(p,p+34.5);
+    return fract(p.x*p.y);
 }
-
-float noise(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
-    float a = hash(i);
-    float b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0));
-    float d = hash(i + vec2(1.0, 1.0));
-    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+float noise(vec2 p){
+    vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+    float a=hash(i),b=hash(i+vec2(1,0)),c=hash(i+vec2(0,1)),d=hash(i+vec2(1,1));
+    return mix(mix(a,b,f.x),mix(c,d,f.x),f.y);
 }
-
-vec3 pointLight(
-    vec3 position,
-    vec3 lightColor,
-    float radius,
-    float intensity,
-    vec3 normal
-) {
-    vec3 toLight = position - vWorld;
-    float dist = length(toLight);
-    vec3 direction = normalize(toLight);
-    float diffuse = max(dot(normal, direction), 0.0);
-    float falloff = clamp(1.0 - dist / radius, 0.0, 1.0);
-    falloff *= falloff;
-    return lightColor * diffuse * falloff * intensity;
+float fbm(vec2 p){
+    float n=0.0,a=.5;
+    for(int i=0;i<4;i++){n+=noise(p)*a;p=p*2.03+17.1;a*=.5;}
+    return n;
 }
+vec3 pointLight(vec3 pos,vec3 col,float radius,float intensity,vec3 normal){
+    vec3 to=pos-vWorld;float d=length(to);vec3 dir=to/max(d,.001);
+    float diffuse=max(dot(normal,dir),0.0);
+    float fall=1.0-clamp(d/radius,0.0,1.0);fall*=fall;
+    return col*diffuse*fall*intensity;
+}
+void main(){
+    vec3 normal=normalize(cross(dFdx(vWorld),dFdy(vWorld)));
+    if(dot(normal,uCamera-vWorld)<0.0)normal=-normal;
 
-void main() {
-    vec3 normal = normalize(cross(dFdx(vWorld), dFdy(vWorld)));
+    vec3 lighting=vec3(.008,.011,.014);
+    lighting+=uColor*pointLight(uLight0Pos,uLight0Color,uLight0Radius,uLight0Intensity,normal);
+    lighting+=uColor*pointLight(uLight1Pos,uLight1Color,uLight1Radius,uLight1Intensity,normal);
 
-    // Cool moonlight and warm cabin glow create the visual temperature contrast.
-    vec3 lighting = vec3(0.012, 0.016, 0.019);
-    lighting += uColor * pointLight(
-        uLight0Pos, uLight0Color, uLight0Radius, uLight0Intensity, normal
-    );
-    lighting += uColor * pointLight(
-        uLight1Pos, uLight1Color, uLight1Radius, uLight1Intensity, normal
-    );
+    vec3 toPixel=vWorld-uFlashPos;
+    float dist=length(toPixel);
+    vec3 ray=toPixel/max(dist,.001);
+    float cone=dot(normalize(uFlashDir),ray);
+    float beam=smoothstep(.62,.91,cone);
+    float hotspot=smoothstep(.88,.995,cone);
+    beam=mix(beam*.38,hotspot,.58);
+    float fall=1.0/(1.0+.055*dist+.018*dist*dist);
+    float diffuse=max(dot(normal,-ray),0.0);
+    lighting+=uColor*beam*fall*diffuse*8.5*uFlashOn;
 
-    // Flashlight: narrow cone, soft edge, strong center, distance attenuation.
-    vec3 toPixel = vWorld - uFlashPos;
-    float flashDist = length(toPixel);
-    vec3 flashVector = normalize(toPixel);
-    float cone = max(dot(normalize(uFlashDir), flashVector), 0.0);
-
-    float outer = smoothstep(0.69, 0.93, cone);
-    float inner = smoothstep(0.90, 0.995, cone);
-    float coneShape = mix(outer * 0.55, inner, 0.72);
-
-    float flashFalloff = 1.0 / (1.0 + 0.08 * flashDist + 0.024 * flashDist * flashDist);
-    float flashDiffuse = max(dot(normal, -flashVector), 0.0);
-
-    lighting += uColor * coneShape * flashFalloff * flashDiffuse * 6.2 * uFlashOn;
-
-    float grain = noise(vWorld.xz * 3.0) * 0.20 + noise(vWorld.xz * 15.0) * 0.08;
-
-    if (uMaterial == 0) { // ground
-        lighting *= 0.62 + grain;
-        float mud = noise(vWorld.xz * 0.85);
-        lighting *= 0.78 + mud * 0.28;
-    } else if (uMaterial == 1) { // bark
-        float bark = 0.72 + 0.28 * noise(vWorld.xy * 7.0);
-        lighting *= bark;
-        lighting *= 0.85 + 0.15 * sin(vWorld.y * 13.0);
-    } else if (uMaterial == 2) { // moss / foliage
-        float leaf = 0.72 + 0.28 * noise(vWorld.xz * 5.0);
-        lighting *= leaf;
-    } else if (uMaterial == 3) { // rock
-        lighting *= 0.65 + grain * 0.55;
-    } else if (uMaterial == 4) { // wood
-        float wood = 0.78 + 0.22 * sin(vWorld.y * 10.0 + noise(vWorld.xz * 2.0) * 3.0);
-        lighting *= wood;
-    } else if (uMaterial == 5) { // metal
-        lighting *= 0.60 + grain * 0.45;
-    } else if (uMaterial == 6) { // warm window
-        float pulse = 0.93 + 0.05 * sin(uTime * 2.0);
-        lighting = uColor * pulse * 2.3;
-    } else if (uMaterial == 7) { // cold light
-        lighting = uColor * 1.8;
-    } else if (uMaterial == 8) { // silhouette
-        lighting *= 0.16;
-    } else if (uMaterial == 9) { // water
-        lighting *= 0.38 + 0.25 * noise(vWorld.xz * 5.0);
+    float n=fbm(vWorld.xz*.32+vec2(uTime*.006,0));
+    float micro=noise(vWorld.xz*5.5);
+    if(uMaterial==0){
+        float wet=.5+.5*noise(vWorld.xz*1.8);
+        lighting*=.52+n*.34;
+        lighting*=.78+micro*.28;
+        lighting+=vec3(.018,.023,.022)*wet;
+    }else if(uMaterial==1){
+        lighting*=.72+.28*noise(vWorld.xy*5.0);
+        lighting*=.82+.18*sin(vWorld.y*11.0);
+    }else if(uMaterial==2){
+        float leaves=.62+.38*fbm(vWorld.xz*1.7);
+        lighting*=leaves;
+        lighting+=vec3(.004,.018,.007)*leaves;
+    }else if(uMaterial==3){
+        lighting*=.58+.42*fbm(vWorld.xz*2.2);
+    }else if(uMaterial==4){
+        float grain=sin(vWorld.y*13.0+noise(vWorld.xz*2.0)*4.0);
+        lighting*=.72+.28*grain*.5;
+    }else if(uMaterial==5){
+        float metal=noise(vWorld.xz*8.0);
+        lighting*=.5+.5*metal;
+    }else if(uMaterial==6){
+        float flicker=.94+.045*sin(uTime*2.3)+.02*sin(uTime*7.7);
+        lighting=uColor*(1.65+flicker*.75);
+    }else if(uMaterial==8){
+        lighting*=.045;
+    }else if(uMaterial==9){
+        float ripple=sin(vWorld.x*5.0+uTime*.7)*sin(vWorld.z*3.0-uTime*.4);
+        lighting*=.24+.12*noise(vWorld.xz*2.0);
+        lighting+=vec3(.008,.022,.028)*(ripple*.5+.5);
     }
 
-    // Height-aware fog: thicker close to the forest floor and in the distance.
-    float distanceToCamera = length(vWorld - uCamera);
-    float heightFog = 1.0 - smoothstep(0.5, 5.0, vWorld.y);
-    float distanceFog = exp(-0.011 * distanceToCamera * distanceToCamera);
-    float fog = clamp(distanceFog * (1.0 - heightFog * 0.22), 0.0, 1.0);
+    float d=length(vWorld-uCamera);
+    float fogNoise=fbm(vWorld.xz*.08+vec2(0,uTime*.012));
+    float fogNear=smoothstep(18.0,46.0,d);
+    float groundFog=(1.0-smoothstep(0.3,3.5,vWorld.y))*.28;
+    float fog=clamp(fogNear+groundFog*.72+fogNoise*.08,0.0,.94);
 
-    // Cold blue-gray atmospheric color.
-    vec3 fogColor = vec3(0.012, 0.021, 0.027);
-    vec3 color = mix(fogColor, lighting, fog);
+    vec3 fogColor=mix(vec3(.008,.014,.020),vec3(.020,.032,.041),smoothstep(0.,1.,fogNoise));
+    vec3 color=mix(lighting,fogColor,fog);
 
-    // Cinematic vignette.
-    vec2 uv = gl_FragCoord.xy / vec2(1280.0, 720.0);
-    float edge = length(uv - vec2(0.5));
-    color *= 1.0 - smoothstep(0.25, 0.78, edge) * 0.34;
+    float edge=length(gl_FragCoord.xy/vec2(1280.0,720.0)-vec2(.5));
+    color*=1.0-smoothstep(.28,.78,edge)*.42;
 
-    // Subtle low-light film grain.
-    float film = hash(gl_FragCoord.xy + uTime * 3.0) - 0.5;
-    color += film * 0.010;
+    float grain=(hash(gl_FragCoord.xy+uTime*13.0)-.5)*.012;
+    color+=grain;
 
-    FragColor = vec4(max(color, vec3(0.0)), 1.0);
+    FragColor=vec4(max(color,vec3(0)),1);
 }
