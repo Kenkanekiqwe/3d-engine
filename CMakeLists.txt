@@ -28,7 +28,7 @@ add_executable(CryHorror
     src/engine/audio/audio.cpp
 )
 
-target_include_directories(CryHorror PRIVATE src)
+target_include_directories(CryHorror PRIVATE src third_party)
 target_link_libraries(CryHorror PRIVATE glfw)
 
 if(WIN32)
