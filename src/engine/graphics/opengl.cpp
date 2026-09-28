@@ -1,9 +1,8 @@
 #include "opengl.hpp"
-#include <iostream>
 
 namespace cry::gl {
 
-#define LOAD(name) do { name = reinterpret_cast<decltype(name)>(glfwGetProcAddress(#name)); if(!name) return false; } while(false)
+#define LOAD(name, symbol) do { name = reinterpret_cast<decltype(name)>(glfwGetProcAddress(symbol)); if(!name) return false; } while(false)
 
 PFNGLCREATESHADERPROC CreateShader{};
 PFNGLSHADERSOURCEPROC ShaderSource{};
@@ -32,15 +31,31 @@ PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer{};
 PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray{};
 
 bool load() {
-    LOAD(CreateShader); LOAD(ShaderSource); LOAD(CompileShader);
-    LOAD(GetShaderiv); LOAD(GetShaderInfoLog); LOAD(DeleteShader);
-    LOAD(CreateProgram); LOAD(AttachShader); LOAD(LinkProgram);
-    LOAD(GetProgramiv); LOAD(GetProgramInfoLog); LOAD(DeleteProgram);
-    LOAD(UseProgram); LOAD(GetUniformLocation); LOAD(Uniform1f);
-    LOAD(Uniform1i); LOAD(Uniform3f); LOAD(UniformMatrix4fv);
-    LOAD(GenVertexArrays); LOAD(BindVertexArray); LOAD(GenBuffers);
-    LOAD(BindBuffer); LOAD(BufferData); LOAD(VertexAttribPointer);
-    LOAD(EnableVertexAttribArray);
+    LOAD(CreateShader, "glCreateShader");
+    LOAD(ShaderSource, "glShaderSource");
+    LOAD(CompileShader, "glCompileShader");
+    LOAD(GetShaderiv, "glGetShaderiv");
+    LOAD(GetShaderInfoLog, "glGetShaderInfoLog");
+    LOAD(DeleteShader, "glDeleteShader");
+    LOAD(CreateProgram, "glCreateProgram");
+    LOAD(AttachShader, "glAttachShader");
+    LOAD(LinkProgram, "glLinkProgram");
+    LOAD(GetProgramiv, "glGetProgramiv");
+    LOAD(GetProgramInfoLog, "glGetProgramInfoLog");
+    LOAD(DeleteProgram, "glDeleteProgram");
+    LOAD(UseProgram, "glUseProgram");
+    LOAD(GetUniformLocation, "glGetUniformLocation");
+    LOAD(Uniform1f, "glUniform1f");
+    LOAD(Uniform1i, "glUniform1i");
+    LOAD(Uniform3f, "glUniform3f");
+    LOAD(UniformMatrix4fv, "glUniformMatrix4fv");
+    LOAD(GenVertexArrays, "glGenVertexArrays");
+    LOAD(BindVertexArray, "glBindVertexArray");
+    LOAD(GenBuffers, "glGenBuffers");
+    LOAD(BindBuffer, "glBindBuffer");
+    LOAD(BufferData, "glBufferData");
+    LOAD(VertexAttribPointer, "glVertexAttribPointer");
+    LOAD(EnableVertexAttribArray, "glEnableVertexAttribArray");
     return true;
 }
 
