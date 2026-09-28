@@ -4,6 +4,21 @@
 #include "opengl.hpp"
 #include "../math/math.hpp"
 namespace cry {
-struct Mesh{unsigned vao{},vbo{},texture{};int count{};Mesh()=default;explicit Mesh(const std::vector<float>&);void draw()const;bool valid()const{return vao&&count>0;}bool textured()const{return texture!=0;}};
-Mesh loadObj(const std::string&);Mesh makeCube();Mesh makeGround(int,float);Mesh makePine();Mesh makeRock();
+struct MeshPart {
+ unsigned vao{},vbo{},albedo{},normal{},roughness{};
+ int count{};
+ bool transparent{};
+};
+struct Mesh {
+ std::vector<MeshPart> parts;
+ bool valid() const { return !parts.empty(); }
+ bool textured() const { for(const auto&p:parts) if(p.albedo) return true; return false; }
+ void draw() const;
+};
+Mesh loadObj(const std::string& path);
+Mesh loadModel(const std::string& path);
+Mesh makeCube();
+Mesh makeGround(int,float);
+Mesh makePine();
+Mesh makeRock();
 }
