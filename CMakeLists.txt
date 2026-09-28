@@ -61,7 +61,7 @@ target_include_directories(CryHorror PRIVATE
 
 target_link_libraries(CryHorror PRIVATE
     glfw
-    assimp::assimp
+    assimp
 )
 
 if(WIN32)
