@@ -42,12 +42,16 @@ FetchContent_Declare(
     URL https://github.com/assimp/assimp/archive/refs/tags/v6.0.5.tar.gz
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
+FetchContent_MakeAvailable(assimp)
 
 add_executable(CryHorror
     src/main.cpp
     src/engine/graphics/opengl.cpp
     src/engine/graphics/shader.cpp
     src/engine/graphics/mesh.cpp
+    src/engine/camera/camera.cpp
+    src/engine/scene/scene.cpp
+    src/engine/input/input.cpp
     src/engine/camera/camera.cpp
     src/engine/scene/scene.cpp
     src/engine/input/input.cpp
