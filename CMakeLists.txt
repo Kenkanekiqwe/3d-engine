@@ -9,6 +9,11 @@ include(FetchContent)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
     glfw
@@ -16,6 +21,13 @@ FetchContent_Declare(
     GIT_TAG 3.4
 )
 FetchContent_MakeAvailable(glfw)
+
+FetchContent_Declare(
+    assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG v6.0.2
+)
+FetchContent_MakeAvailable(assimp)
 
 add_executable(CryHorror
     src/main.cpp
@@ -29,7 +41,7 @@ add_executable(CryHorror
 )
 
 target_include_directories(CryHorror PRIVATE src third_party)
-target_link_libraries(CryHorror PRIVATE glfw)
+target_link_libraries(CryHorror PRIVATE glfw assimp)
 
 if(WIN32)
     target_link_libraries(CryHorror PRIVATE opengl32 winmm)
