@@ -9,6 +9,7 @@
 #include "engine/input/input.hpp"
 #include "engine/camera/camera.hpp"
 #include "engine/scene/scene.hpp"
+#include "engine/audio/audio.hpp"
 using namespace cry;
 
 int main(){
@@ -29,10 +30,13 @@ int main(){
     Shader shader;
     if(!shader.create("assets/shaders/world.vert","assets/shaders/world.frag")) return 1;
     Input input(window);
+    Audio audio;
     Camera camera({0,1.68f,6.5f});
     Scene scene;
     scene.create();
     glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+
+    audio.playAmbient("assets/audio/ambient_horror.wav", true);
 
     bool lightOn=true,lastF=false;
     const auto start=std::chrono::steady_clock::now();
