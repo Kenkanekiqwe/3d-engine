@@ -21,6 +21,8 @@ add_executable(CryHorror
     src/main.cpp
     src/engine/graphics/opengl.cpp
     src/engine/graphics/shader.cpp
+    src/engine/graphics/mesh.cpp
+    src/engine/camera/camera.cpp
     src/engine/input/input.cpp
 )
 
